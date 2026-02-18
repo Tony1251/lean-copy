@@ -1,4 +1,4 @@
-name: Run Lean Backtest (CLI)
+name: Run Lean Backtest (CLI Fixed)
 
 on:
   workflow_dispatch:
@@ -18,12 +18,12 @@ jobs:
       - name: Install Lean CLI
         run: pip install lean
 
-      - name: Initialize Lean and Run Backtest
+      - name: Run Lean Backtest
         run: |
-          # Initialize a lean workspace if not present
-          lean init --non-interactive
-          # Run the basic template algorithm included in the repo
-          # We point to the Python version as it's often easier to bootstrap in CLI
+          # lean init creates a basic setup if it doesn't exist
+          # Using yes to answer prompts if any
+          yes "" | lean init
+          # Run backtest on the Python algorithm
           lean backtest "Algorithm.Python/BasicTemplateAlgorithm.py" --output backtests
 
       - name: Upload Results
