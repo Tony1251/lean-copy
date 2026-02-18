@@ -1,0 +1,31 @@
+name: Run Lean Backtest
+
+on:
+  workflow_dispatch:
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Build Lean
+        run: dotnet build QuantConnect.Lean.sln
+
+      - name: Run Basic Template Backtest
+        run: |
+          cd Launcher/bin/Debug/
+          dotnet QuantConnect.Lean.Launcher.dll --algorithm BasicTemplateAlgorithm --language CSharp
+
+      - name: Upload Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Backtest-Results
+          path: Launcher/bin/Debug/backtests/
