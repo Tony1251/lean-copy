@@ -1,4 +1,4 @@
-name: Run Lean Backtest (Docker)
+name: Run Lean Backtest (Docker Fixed)
 
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ jobs:
 
       - name: Run Lean in Docker
         run: |
-          docker run --rm \n            -v $(pwd):/Lean \n            -w /Lean \n            quantconnect/lean:latest \n            dotnet Launcher/bin/Debug/QuantConnect.Lean.Launcher.dll --algorithm BasicTemplateAlgorithm --language CSharp
+          docker run --rm -v $(pwd):/Lean -w /Lean quantconnect/lean:latest dotnet Launcher/bin/Debug/QuantConnect.Lean.Launcher.dll --algorithm BasicTemplateAlgorithm --language CSharp
 
       - name: Upload Results
         uses: actions/upload-artifact@v4
