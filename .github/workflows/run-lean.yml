@@ -1,4 +1,4 @@
-name: Run Lean Backtest (Docker Fixed)
+name: Run Lean Backtest (CLI)
 
 on:
   workflow_dispatch:
@@ -10,12 +10,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create Results Directory
-        run: mkdir -p backtests
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-      - name: Run Lean in Docker
+      - name: Install Lean CLI
+        run: pip install lean
+
+      - name: Initialize Lean and Run Backtest
         run: |
-          docker run --rm -v $(pwd):/Lean -w /Lean quantconnect/lean:latest dotnet Launcher/bin/Debug/QuantConnect.Lean.Launcher.dll --algorithm BasicTemplateAlgorithm --language CSharp
+          # Initialize a lean workspace if not present
+          lean init --non-interactive
+          # Run the basic template algorithm included in the repo
+          # We point to the Python version as it's often easier to bootstrap in CLI
+          lean backtest "Algorithm.Python/BasicTemplateAlgorithm.py" --output backtests
 
       - name: Upload Results
         uses: actions/upload-artifact@v4
